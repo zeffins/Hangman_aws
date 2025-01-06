@@ -1,0 +1,80 @@
+@import './variables.css';
+@import './animations.css';
+
+.app {
+  position: relative;
+}
+
+.game-npc {
+  --npc-color: #7a7aff;
+  cursor: help;
+  outline: none;
+  transition: all var(--transition-normal);
+  will-change: transform;
+  position: absolute;
+  right: var(--spacing-xl, 32px);
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: 80vh;
+  background: rgba(122, 122, 255, 0.15);
+  backdrop-filter: blur(5px);
+  border-radius: var(--border-radius-lg, 15px);
+  padding: var(--spacing-md, 15px);
+  width: 200px;
+  height: 200px;
+  z-index: 9999;
+  border: 1px solid rgba(122, 122, 255, 0.3);
+  box-shadow: var(--shadow-lg, 0 0 20px rgba(122, 122, 255, 0.2));
+  transition: all 0.3s ease;
+}
+
+.game-npc:hover {
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 0 30px rgba(122, 122, 255, 0.4);
+}
+
+.game-npc:focus {
+  outline: 2px solid var(--npc-color);
+  box-shadow: 0 0 30px rgba(122, 122, 255, 0.4);
+}
+
+.npc-message {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: var(--spacing-md, 12px);
+  min-width: 200px;
+  z-index: 1010;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: var(--npc-color, #7a7aff);
+  padding: var(--spacing-md, 12px) var(--spacing-lg, 20px);
+  border-radius: var(--border-radius-lg, 20px);
+  box-shadow: var(--shadow-md, 0 0 15px rgba(122, 122, 255, 0.3));
+  text-align: center;
+  white-space: normal;
+  text-align: center;
+  max-width: 300px;
+  width: 90vw;
+  font-family: 'Courier New', monospace;
+  border: 1px solid rgba(122, 122, 255, 0.5);
+  text-shadow: 0 0 5px rgba(122, 122, 255, 0.5);
+}
+
+.game-npc:hover {
+  transform: scale(1.05);
+  transition: transform 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .game-npc {
+    right: var(--spacing-sm, 10px);
+    top: var(--spacing-sm, 10px);
+    padding: var(--spacing-sm, 10px);
+  }
+
+  .npc-message {
+    font-size: var(--font-size-sm, 12px);
+    padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  }
+}

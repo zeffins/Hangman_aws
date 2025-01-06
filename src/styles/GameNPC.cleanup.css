@@ -1,0 +1,13 @@
+/* Cleanup any stale WebGL contexts */
+canvas {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Ensure proper stacking context */
+.game-npc {
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
