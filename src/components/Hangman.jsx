@@ -143,3 +143,4 @@ const Hangman = () => {
 };
 
 export default Hangman;
+// new changes
