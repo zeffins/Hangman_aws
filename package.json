@@ -10,10 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7ab5988 (navin's commit)
     "@aws-sdk/client-bedrock-runtime": "^3.723.0",
     "framer-motion": "^11.16.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+<<<<<<< HEAD
+=======
+=======
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.1",
+>>>>>>> 6a21f37 (navin's commit)
+>>>>>>> 7ab5988 (navin's commit)
     "three": "^0.172.0"
   },
   "devDependencies": {

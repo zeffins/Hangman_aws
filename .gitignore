@@ -22,6 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 7ab5988 (navin's commit)
 
 # .gitignore
 .env
@@ -29,3 +33,8 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> 6a21f37 (navin's commit)
+>>>>>>> 7ab5988 (navin's commit)

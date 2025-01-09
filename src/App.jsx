@@ -1,18 +1,28 @@
-import './App.css'
-import Hangman from './components/Hangman'
-import ErrorBoundary from './components/ErrorBoundary'
-
+import React, { useState,useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import Hangman from './components/Hangman';
+import Home from './components/Home';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
+  const [difficulty, setDifficulty] = useState('Easy');
+  useEffect(()=>{
+    console.log(difficulty)
+  })
+
   return (
-    <div className="app">
-      <h1>Hangman Game</h1>
-      <ErrorBoundary>
-        <Hangman />
-        
-      </ErrorBoundary>
-    </div>
-  )
+    <Router>
+      <div className="app">
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<Home setDifficulty={setDifficulty} />} />
+            <Route path="/hangman" element={<Hangman difficulty={difficulty} />} />
+          </Routes>
+        </ErrorBoundary>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

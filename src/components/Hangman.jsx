@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import HangmanDrawing from './HangmanDrawing';
 import '../styles/Hangman.css';
+import { div } from 'three/tsl';
 
 const words = [
   'APPLICATION',
@@ -30,7 +31,7 @@ const getRandomWord = () => {
 const maxWrongGuesses = 6;
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-const Hangman = () => {
+const Hangman = ({difficulty}) => {
   const [word, setWord] = useState('');
   const [loading, setLoading] = useState(true);
   const [guessedLetters, setGuessedLetters] = useState(new Set());
@@ -112,18 +113,23 @@ const Hangman = () => {
         </div>
       ) : (
         <>
+          <h1 className='title'>Hangman</h1>
           <HangmanDrawing wrongGuesses={wrongGuesses} />
           
           <div className="word-display">{maskedWord}</div>
           
           <div className="game-info">
-            <div className="score">Score: {score}</div>
+            <div className="score">Score : <span>{score}</span></div>
             <div className="guesses-remaining">
-              Remaining Guesses: {maxWrongGuesses - wrongGuesses}
+              Remaining Guesses : <span>{maxWrongGuesses - wrongGuesses}</span>
+            </div>
+            <div className='difficulty'>
+            Difficulty : <span>{difficulty}</span>
             </div>
           </div>
 
           {gameOver ? (
+            <div className="game-result-container">
             <div className={`game-result ${gameResult.includes('Win') ? 'win' : 'lose'}`}>
               <p>{gameResult}</p>
               <button 
@@ -134,6 +140,7 @@ const Hangman = () => {
               >
                 {loading ? 'Loading...' : 'Play Again'}
               </button>
+            </div>
             </div>
           ) : (
             <div className="keyboard">

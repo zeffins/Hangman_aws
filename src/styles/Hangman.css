@@ -1,28 +1,48 @@
+/* Modern Reset and Base Styles */
 .hangman-container {
-  text-align: center;
-  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  background:#ffe100;
+  padding: 2rem;
+  height:100vh;
+  font-family: 'Poppins', sans-serif;
+}
+.title{
+  font-size:50px;
+  font-family:'Wallpoet';
+  color:#1c1c1c;
+  width:100%;
+  text-align:center;
 }
 
+/* Stylish Game Header */
 .game-header {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+  backdrop-filter: blur(4px);
+  margin-bottom:1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  transition: transform 0.3s ease;
 }
 
+.game-header:hover {
+  transform: translateY(-5px);
+}
+
+/* Word Display Enhancement */
 .word-display {
-  font-size: 2em;
-  margin: 20px 0;
+  font-size: 2.5em;
+  margin: 1rem 0;
+  letter-spacing: 0.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  animation: bounce 1s ease infinite;
 }
 
-.game-info {
-  margin-top: 20px;
-  font-size: 1.2em;
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
+/* Enhanced Keyboard Design */
 .keyboard {
   display: flex;
   flex-wrap: wrap;
