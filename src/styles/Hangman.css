@@ -73,3 +73,61 @@
   font-size: 1em;
   cursor: pointer;
 }
+
+.loading {
+  text-align: center;
+  font-size: 1.5rem;
+  padding: 2rem;
+  color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.game-result.win {
+  color: #2ecc71;
+}
+
+.game-result.lose {
+  color: #e74c3c;
+}
+.reset-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.reset-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.reset-button:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.loading-text {
+  font-size: 1.5rem;
+  color: #333;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
