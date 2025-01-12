@@ -1,52 +1,96 @@
-import React, { useState, useEffect } from 'react';
-import HangmanDrawing from './HangmanDrawing';
+// Hangman.jsx
+import React, { useState, useEffect, useCallback } from 'react';
 import '../styles/Hangman.css';
-import { div } from 'three/tsl';
 
-const words = [
-  'APPLICATION',
-  'FUNCTION',
-  'VARIABLE',
-  'COMPONENT',
-  'INTERFACE',
-  'FRONTEND',
-  'BACKEND',
-  'DEPLOYMENT',
-  'PYTHON',
-  'JAVA',
-  'TYPESCRIPT',
-  'ANGULAR',
-  'DOCKER',
-  'KUBERNETES',
-  'MONGODB',
-  'POSTGRESQL',
-  'LINUX',
-  'WINDOWS',
-];
-
-const getRandomWord = () => {
-  return words[Math.floor(Math.random() * words.length)];
+// Word sets organized by difficulty
+const WORD_SETS = {
+  EASY: [
+    'JAVA',
+    'PYTHON',
+    'HTML',
+    'CSS',
+    'REACT',
+    'LINUX',
+    'DOCKER',
+    'GIT',
+    'NODE',
+    'API'
+  ],
+  MEDIUM: [
+    'FUNCTION',
+    'VARIABLE',
+    'FRONTEND',
+    'BACKEND',
+    'MONGODB',
+    'ANGULAR',
+    'WINDOWS',
+    'POSTGRES',
+    'EXPRESS',
+    'TYPESCRIPT'
+  ],
+  HARD: [
+    'APPLICATION',
+    'KUBERNETES',
+    'POSTGRESQL',
+    'DEPLOYMENT',
+    'INTERFACE',
+    'MIDDLEWARE',
+    'ALGORITHM',
+    'ENCRYPTION',
+    'MICROSERVICE',
+    'ARCHITECTURE'
+  ]
 };
 
-const maxWrongGuesses = 6;
-const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-const Hangman = ({difficulty}) => {
+const Hangman = ({ difficulty = 'MEDIUM' }) => {
   const [word, setWord] = useState('');
-  const [loading, setLoading] = useState(true);
   const [guessedLetters, setGuessedLetters] = useState(new Set());
   const [wrongGuesses, setWrongGuesses] = useState(0);
+  const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [gameResult, setGameResult] = useState('');
-  const [score, setScore] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  const calculateScore = () => {
-    const baseScore = 100;
-    const penaltyPerWrongGuess = 10;
-    return baseScore - (wrongGuesses * penaltyPerWrongGuess);
+  const maxWrongGuesses = 6;
+
+  // Get random word based on difficulty
+  const getRandomWord = () => {
+    const wordSet = WORD_SETS[difficulty.toUpperCase()] || WORD_SETS.MEDIUM;
+    return wordSet[Math.floor(Math.random() * wordSet.length)];
   };
 
-  const handleGuess = (letter) => {
+  // Calculate score based on difficulty
+  const calculateScore = () => {
+    const baseScore = {
+      EASY: 50,
+      MEDIUM: 100,
+      HARD: 150
+    };
+    
+    const penaltyPerWrongGuess = {
+      EASY: 5,
+      MEDIUM: 10,
+      HARD: 15
+    };
+
+    const difficultyLevel = difficulty.toUpperCase();
+    return baseScore[difficultyLevel] - (wrongGuesses * penaltyPerWrongGuess[difficultyLevel]);
+  };
+
+  // Reset game state
+  const resetGame = () => {
+    setLoading(true);
+    const newWord = getRandomWord();
+    setWord(newWord);
+    setGuessedLetters(new Set());
+    setWrongGuesses(0);
+    setGameOver(false);
+    setGameResult('');
+    setLoading(false);
+  };
+
+  // Handle letter guess
+  const handleGuess = useCallback((letter) => {
     if (gameOver || guessedLetters.has(letter)) return;
 
     const newGuessedLetters = new Set(guessedLetters).add(letter);
@@ -67,43 +111,138 @@ const Hangman = ({difficulty}) => {
       if (isWordComplete) {
         setGameOver(true);
         setGameResult('Congratulations! You Win!');
-        setScore(score + calculateScore());
+        setScore(prevScore => prevScore + calculateScore());
       }
+    }
+  }, [gameOver, guessedLetters, word, wrongGuesses, maxWrongGuesses]);
+
+  // Handle keyboard input
+  useEffect(() => {
+    const handleKeyPress = (event) => {
+      if (gameOver) return;
+      
+      const key = event.key.toUpperCase();
+      if (/^[A-Z]$/.test(key) && !guessedLetters.has(key)) {
+        handleGuess(key);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('keyup', handleKeyPress);
+
+    // Cleanup: remove event listener
+    return () => {
+      window.removeEventListener('keyup', handleKeyPress);
+    };
+  }, [guessedLetters, gameOver, handleGuess]);
+
+  // Get hint based on difficulty
+  const getHint = () => {
+    switch(difficulty.toUpperCase()) {
+      case 'EASY':
+        return `Hint: The word has ${word.length} letters`;
+      case 'MEDIUM':
+        return `Hint: First letter is ${word[0]}`;
+      case 'HARD':
+        return 'No hints available in Hard mode!';
+      default:
+        return '';
     }
   };
 
-  const resetGame = () => {
-    setLoading(true);
-    setWord(getRandomWord());
-    setGuessedLetters(new Set());
-    setWrongGuesses(0);
-    setGameOver(false);
-    setGameResult('');
-    setLoading(false);
-  };
-
+  // Create masked word display
   const maskedWord = word
     .split('')
     .map(letter => guessedLetters.has(letter) ? letter : '_')
     .join(' ');
 
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      const letter = event.key.toUpperCase();
-      if (alphabet.includes(letter) && !guessedLetters.has(letter) && !loading && !gameOver) {
-        handleGuess(letter);
-      }
-    };
+  // Generate keyboard
+  const keyboard = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => (
+    <button
+      key={letter}
+      className={`key ${guessedLetters.has(letter) ? 'used' : ''}`}
+      onClick={() => handleGuess(letter)}
+      disabled={guessedLetters.has(letter) || gameOver}
+    >
+      {letter}
+    </button>
+  ));
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [guessedLetters, gameOver, loading, word]);
-
+  // Reset game when difficulty changes
   useEffect(() => {
     resetGame();
-  }, []);
+  }, [difficulty]);
+
+  const HangmanDrawing = ({ wrongGuesses }) => {
+    return (
+      <svg className="hangman-drawing" viewBox="0 0 200 250">
+        {/* Base and Gallows - Always visible */}
+        <g className="gallows">
+          <line x1="40" y1="230" x2="160" y2="230" /> {/* Base */}
+          <line x1="100" y1="230" x2="100" y2="30" />  {/* Vertical pole */}
+          <line x1="100" y1="30" x2="150" y2="30" />   {/* Top */}
+          <line x1="150" y1="30" x2="150" y2="50" />   {/* Noose */}
+        </g>
+
+        {/* Body Parts - Appear based on wrong guesses */}
+        <g className="hangman-body">
+          {wrongGuesses >= 1 && (
+            <circle 
+              cx="150" 
+              cy="70" 
+              r="20" 
+              className="hangman-part head"
+            />
+          )}
+          {wrongGuesses >= 2 && (
+            <line 
+              x1="150" 
+              y1="90" 
+              x2="150" 
+              y2="150" 
+              className="hangman-part body"
+            />
+          )}
+          {wrongGuesses >= 3 && (
+            <line 
+              x1="150" 
+              y1="110" 
+              x2="120" 
+              y2="140" 
+              className="hangman-part left-arm"
+            />
+          )}
+          {wrongGuesses >= 4 && (
+            <line 
+              x1="150" 
+              y1="110" 
+              x2="180" 
+              y2="140" 
+              className="hangman-part right-arm"
+            />
+          )}
+          {wrongGuesses >= 5 && (
+            <line 
+              x1="150" 
+              y1="150" 
+              x2="120" 
+              y2="180" 
+              className="hangman-part left-leg"
+            />
+          )}
+          {wrongGuesses >= 6 && (
+            <line 
+              x1="150" 
+              y1="150" 
+              x2="180" 
+              y2="180" 
+              className="hangman-part right-leg"
+            />
+          )}
+        </g>
+      </svg>
+    );
+  };
 
   return (
     <div className="hangman-container">
@@ -113,49 +252,40 @@ const Hangman = ({difficulty}) => {
         </div>
       ) : (
         <>
-          <h1 className='title'>Hangman</h1>
-          <HangmanDrawing wrongGuesses={wrongGuesses} />
-          
-          <div className="word-display">{maskedWord}</div>
-          
-          <div className="game-info">
-            <div className="score">Score : <span>{score}</span></div>
-            <div className="guesses-remaining">
-              Remaining Guesses : <span>{maxWrongGuesses - wrongGuesses}</span>
+          <div className="game-header">
+            <div className="score">Score: {score}</div>
+            <div className="difficulty">
+              Difficulty: <span className={`difficulty-${difficulty.toLowerCase()}`}>
+                {difficulty}
+              </span>
             </div>
-            <div className='difficulty'>
-            Difficulty : <span>{difficulty}</span>
+            <div className="guesses">
+              Guesses Left: {maxWrongGuesses - wrongGuesses}
             </div>
           </div>
 
-          {gameOver ? (
-            <div className="game-result-container">
+          <HangmanDrawing wrongGuesses={wrongGuesses} />
+
+          <div className="word-display" data-difficulty={difficulty.toLowerCase()}>
+            {maskedWord}
+          </div>
+
+          {!gameOver && <div className="hint">{getHint()}</div>}
+
+          {gameResult && (
             <div className={`game-result ${gameResult.includes('Win') ? 'win' : 'lose'}`}>
-              <p>{gameResult}</p>
-              <button 
-                type="button"
-                onClick={resetGame}
-                className="reset-button"
-                disabled={loading}
-              >
-                {loading ? 'Loading...' : 'Play Again'}
-              </button>
+              {gameResult}
             </div>
-            </div>
-          ) : (
-            <div className="keyboard">
-              {alphabet.map((letter) => (
-                <button
-                  key={letter}
-                  type="button"
-                  onClick={() => handleGuess(letter)}
-                  disabled={guessedLetters.has(letter) || loading}
-                  className={`key ${guessedLetters.has(letter) ? 'used' : ''}`}
-                >
-                  {letter}
-                </button>
-              ))}
-            </div>
+          )}
+
+          <div className="keyboard">
+            {keyboard}
+          </div>
+
+          {gameOver && (
+            <button className="reset-button" onClick={resetGame}>
+              Play Again
+            </button>
           )}
         </>
       )}
